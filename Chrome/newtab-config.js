@@ -3,35 +3,19 @@ import { state } from './newtab-core.js';
 
 /* ─────────────────────────────────────────────
    Storage helpers
-   sync  → small settings (overlay, slideshow, quickLinks, musicIndex, current bg id)
-   local → large blobs (uploaded files, card positions)
+   sync  → settings (overlay, slideshow, quickLinks, musicIndex, current bg id)
+   local → card positions
    ───────────────────────────────────────────── */
 
 export function saveSettings(settings) {
-  // Strip uploads from sync (too large); they live in local storage
-  const { uploads, uploadedAudio, ...syncSafe } = settings;
-  chrome.storage.sync.set({ chromeui_settings: syncSafe });
-
-  // Persist uploads separately in local
-  if (uploads !== undefined) {
-    chrome.storage.local.set({ chromeui_uploads: uploads });
-  }
-  if (uploadedAudio !== undefined) {
-    chrome.storage.local.set({ chromeui_audio: uploadedAudio });
-  }
+  chrome.storage.sync.set({ chromeui_settings: settings });
 }
 
 export function loadSettings() {
   return new Promise((res) => {
     chrome.storage.sync.get(['chromeui_settings'], (syncData) => {
-      const base = (syncData && syncData.chromeui_settings) || {};
-
-      // Also load local blobs and merge them in
-      chrome.storage.local.get(['chromeui_uploads', 'chromeui_audio'], (localData) => {
-        if (localData.chromeui_uploads) base.uploads = localData.chromeui_uploads;
-        if (localData.chromeui_audio) base.uploadedAudio = localData.chromeui_audio;
-        res(Object.keys(base).length ? base : null);
-      });
+      const base = (syncData && syncData.chromeui_settings) || null;
+      res(base);
     });
   });
 }
@@ -57,12 +41,6 @@ export function buildList(configs, saved) {
   (configs.images || []).forEach(i =>
     list.push({ type: 'image', src: chrome.runtime.getURL(i.path), name: i.name, id: i.id, overlay: overlayVal })
   );
-  if (saved && saved.uploads && Array.isArray(saved.uploads)) {
-    saved.uploads.forEach(u => {
-      if (!u.id) u.id = 'upload-' + Date.now();
-      list.unshift(u);
-    });
-  }
   return list;
 }
 
@@ -82,9 +60,6 @@ export function loadPlaylist(configMusic, saved) {
   (configMusic || []).forEach(m => {
     playlist.push({ name: m.name, src: chrome.runtime.getURL(m.path), id: m.id || 'music-' + m.name });
   });
-  if (saved && saved.uploadedAudio && Array.isArray(saved.uploadedAudio)) {
-    saved.uploadedAudio.forEach(a => playlist.unshift(a));
-  }
   state.music.playlist = playlist;
   if (saved && typeof saved.musicIndex === 'number') state.music.index = saved.musicIndex;
 }
