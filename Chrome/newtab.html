@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>New Tab</title>
+    <link rel="shortcut icon" href="assets/fav.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Background Layer -->
+    <div id="bg-container">
+      <video id="bg-video" autoplay muted loop playsinline></video>
+      <img id="bg-image" alt="" />
+      <div id="overlay"></div>
+      <div id="noise-layer"></div>
+    </div>
+
+    <!-- Top Bar -->
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-dot"></span>
+        <span class="brand-name">ChromeUI</span>
+      </div>
+      <div class="right-controls">
+        <button id="open-settings" class="btn icon-btn" title="Settings">
+          <i class="bi bi-sliders2"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Dashboard -->
+    <main class="dashboard">
+      <!-- Left Panel: Clock, Search, Links -->
+      <div class="left-panel">
+        <div class="hero-section">
+          <div class="clock-wrap">
+            <div class="clock" id="clock">--:--</div>
+            <div class="greeting" id="greeting">Good day</div>
+          </div>
+
+          <!-- Quote Display -->
+          <div class="quote-block" id="quote-block">
+            <span class="quote-mark">&ldquo;</span>
+            <p class="quote-text" id="quote-text">Loading a thought for you…</p>
+            <p class="quote-author" id="quote-author"></p>
+          </div>
+
+          <!-- Search -->
+          <div class="search-card">
+            <i class="bi bi-search search-icon"></i>
+            <input id="search" placeholder="Search or enter a URL…" autocomplete="off" spellcheck="false" />
+          </div>
+
+          <!-- Quick Links -->
+          <div class="quick-links" id="quick-links"></div>
+        </div>
+      </div>
+
+      <!-- Right Panel: Cards -->
+      <div class="right-panel">
+        <div id="card-area">
+
+          <!-- Background Controls Card -->
+          <div id="bg-controls-card" class="card controls-card" draggable="true">
+            <div class="card-header">
+              <i class="bi bi-collection-play card-icon"></i>
+              <span class="card-title">Background</span>
+              <span id="current-bg-name" class="card-badge">Default</span>
+            </div>
+            <div class="controls-row">
+              <button id="toggle-play" class="control" title="Play/Pause">
+                <i class="bi bi-pause-fill"></i>
+              </button>
+              <button id="prev-bg" class="control" title="Previous">
+                <i class="bi bi-skip-start-fill"></i>
+              </button>
+              <button id="next-bg" class="control" title="Next">
+                <i class="bi bi-skip-end-fill"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Spotify Player Card -->
+          <div id="spotify-player-card" class="card spotify-card" draggable="true">
+            <div class="card-header">
+              <i class="bi bi-spotify card-icon" style="color:#1DB954"></i>
+              <span class="card-title">Spotify</span>
+            </div>
+            <iframe
+              id="spotify-player"
+              style="border-radius:10px;display:block;"
+              src="https://open.spotify.com/embed/playlist/37i9dQZF1DWYfNJLV7OBMA?utm_source=generator&theme=0"
+              width="100%"
+              height="232"
+              frameborder="0"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"
+            ></iframe>
+          </div>
+
+          <!-- To-Do Card -->
+          <div id="todo-card-module" class="card todo-card" draggable="true">
+            <div class="card-header">
+              <i class="bi bi-check2-square card-icon"></i>
+              <span class="card-title">To-Do</span>
+            </div>
+            <div class="todo-input-group">
+              <input type="text" id="todo-input" placeholder="Add a task…" autocomplete="off" />
+              <button id="add-todo-btn" class="btn todo-add-btn" title="Add task">
+                <i class="bi bi-plus-lg"></i>
+              </button>
+            </div>
+            <p id="errmsg" class="errmsg"></p>
+            <ul id="todo-list"></ul>
+          </div>
+
+        </div>
+      </div>
+    </main>
+
+    <!-- Settings Dialog -->
+    <dialog id="settings" class="dialog">
+      <div class="dialog-inner">
+        <div class="dialog-header">
+          <h3 class="dialog-title"><i class="bi bi-sliders2"></i> Settings</h3>
+          <button id="close-btn" class="btn icon-btn close-x" title="Close"><i class="bi bi-x-lg"></i></button>
+        </div>
+
+        <form method="dialog" id="settings-form">
+
+          <section class="settings-section">
+            <h4 class="section-label">Slideshow</h4>
+            <div class="toggle-row">
+              <label class="toggle-label">
+                <input id="slideshow-enable" type="checkbox" class="toggle-input" />
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                Enable slideshow
+              </label>
+              <label class="setting-row">
+                <span>Interval (sec)</span>
+                <input id="slideshow-interval" type="number" min="3" value="8" class="num-input" />
+              </label>
+            </div>
+          </section>
+
+          <section class="settings-section">
+            <h4 class="section-label">Panels</h4>
+            <div class="toggle-row">
+              <label class="toggle-label">
+                <input id="bg-toggle" type="checkbox" class="toggle-input" />
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                Hide BG Controls
+              </label>
+              <label class="toggle-label">
+                <input id="spotify-toggle" type="checkbox" class="toggle-input" />
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                Hide Spotify
+              </label>
+              <label class="toggle-label">
+                <input id="todo-toggle" type="checkbox" class="toggle-input" />
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                Hide To-Do
+              </label>
+            </div>
+          </section>
+
+          <section class="settings-section">
+            <h4 class="section-label">Card Dragging</h4>
+            <div class="toggle-row">
+              <label class="toggle-label">
+                <input id="lock-toggle" type="checkbox" class="toggle-input" />
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                Lock card positions
+              </label>
+            </div>
+          </section>
+
+          <section class="settings-section">
+            <h4 class="section-label">Background</h4>
+            <div class="field">
+              <label class="field-label">Choose image</label>
+              <select id="image-select" class="select-input"><option value="">(none)</option></select>
+            </div>
+            <div class="field">
+              <label class="field-label">Choose video</label>
+              <select id="video-select" class="select-input"><option value="">(none)</option></select>
+            </div>
+            <div class="field">
+              <label class="field-label">Upload image or video</label>
+              <label class="file-label" for="file-input">
+                <i class="bi bi-cloud-upload"></i> Choose file…
+              </label>
+              <input id="file-input" type="file" accept="image/*,video/*" class="file-hidden" />
+              <span id="file-name" class="file-chosen">No file chosen</span>
+            </div>
+            <div class="field">
+              <label class="field-label">Overlay darkness</label>
+              <div class="range-row">
+                <input id="overlay-range" type="range" min="0" max="1" step="0.05" value="0.45" />
+                <span id="overlay-val" class="range-readout">0.45</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="settings-section">
+            <h4 class="section-label">Quick Links</h4>
+            <div class="field">
+              <div class="quick-add-row">
+                <input id="quick-title" placeholder="Label" />
+                <input id="quick-url" placeholder="https://…" class="url-input" />
+                <button id="add-quick" type="button" class="btn">Add</button>
+              </div>
+              <div id="quick-list-editor" class="quick-editor"></div>
+            </div>
+          </section>
+
+          <section class="settings-section">
+            <h4 class="section-label">Music</h4>
+            <div class="field">
+              <label class="field-label">Packaged music</label>
+              <select id="music-select" class="select-input"><option value="">(none)</option></select>
+            </div>
+            <div class="field">
+              <label class="field-label">Upload audio</label>
+              <label class="file-label" for="audio-input">
+                <i class="bi bi-music-note-beamed"></i> Choose audio…
+              </label>
+              <input id="audio-input" type="file" accept="audio/*" class="file-hidden" />
+            </div>
+          </section>
+
+          <menu class="dialog-actions">
+            <button id="save-btn" type="submit" class="btn btn-primary">
+              <i class="bi bi-check2"></i> Save Changes
+            </button>
+            <p class="footer-credit">Made with ♥ by Riviya_X</p>
+          </menu>
+        </form>
+      </div>
+    </dialog>
+
+    <!-- Music Player Bar (bottom-left) -->
+    <div id="music-control" class="music-control">
+      <button id="music-prev" class="music-btn" title="Previous"><i class="bi bi-skip-start-fill"></i></button>
+      <button id="music-play" class="music-btn music-play-btn" title="Play/Pause"><i class="bi bi-play-fill"></i></button>
+      <button id="music-next" class="music-btn" title="Next"><i class="bi bi-skip-end-fill"></i></button>
+      <div id="music-title" class="music-title">—</div>
+    </div>
+
+    <audio id="audio-player" preload="auto"></audio>
+
+    <script type="module" src="newtab-dom.js"></script>
+    <script src="todo.js"></script>
+  </body>
+</html>
