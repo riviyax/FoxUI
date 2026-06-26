@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FoxUI — Elevate Your Browsing Space</title>
+  <meta name="description" content="FoxUI is a cross-platform browser extension that brings ambient audio, native Spotify integration, and a calm, modular dashboard to your new tab." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Ambient background glows -->
+  <div class="ambient-bg" aria-hidden="true">
+    <div class="glow glow-chrome"></div>
+    <div class="glow glow-firefox"></div>
+  </div>
+
+  <div class="page">
+
+    <!-- ===================== NAVBAR ===================== -->
+    <header class="navbar">
+      <div class="navbar__inner">
+        <a href="#" class="brand" aria-label="FoxUI home">
+          <img
+            class="brand__logo"
+            src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237eb8f7'/%3E%3Cstop offset='1' stop-color='%23ff8b54'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='3' y='3' width='42' height='42' rx='12' fill='none' stroke='url(%23g)' stroke-width='2.5'/%3E%3Cpath d='M16 30 L24 16 L32 30 Z' fill='none' stroke='url(%23g)' stroke-width='2.5' stroke-linejoin='round'/%3E%3C/svg%3E"
+            alt="FoxUI logo"
+            width="32"
+            height="32"
+            loading="eager"
+          />
+          <span class="brand__name">FoxUI</span>
+        </a>
+
+        <nav class="navbar__links" aria-label="Primary">
+          <a class="navbar__github" href="https://github.com" target="_blank" rel="noopener noreferrer">
+            GitHub <span aria-hidden="true">↗</span>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+
+      <!-- ===================== HERO ===================== -->
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero__inner">
+          <span class="badge">Cross-Platform Extension</span>
+
+          <h1 id="hero-title" class="hero__title">Elevate Your Browsing Space</h1>
+
+          <p class="hero__subtitle">
+            FoxUI replaces your new tab with a calm, modular dashboard — ambient audio,
+            native Spotify control, and a minimal clock, all tuned to disappear into your workflow.
+          </p>
+
+          <div class="cta-row">
+            <a href="#" class="btn btn--chrome">
+              <span class="btn__icon" aria-hidden="true">✦</span>
+              Add to Chrome
+            </a>
+            <a href="#" class="btn btn--firefox">
+              <span class="btn__icon" aria-hidden="true">◈</span>
+              Add to Firefox
+            </a>
+          </div>
+        </div>
+
+        <!-- ===================== MOCKUP WINDOW ===================== -->
+        <div class="mockup" role="img" aria-label="Preview of the FoxUI dashboard showing the ambient new tab interface">
+          <div class="mockup__chrome">
+            <span class="mockup__dot mockup__dot--a"></span>
+            <span class="mockup__dot mockup__dot--b"></span>
+            <span class="mockup__dot mockup__dot--c"></span>
+          </div>
+          <div class="mockup__screen">
+            <div class="mockup__clock">09:41</div>
+            <div class="mockup__quote">"Calm space, clear mind."</div>
+            <div class="mockup__player">
+              <div class="mockup__player-art" aria-hidden="true"></div>
+              <div class="mockup__player-meta">
+                <span class="mockup__player-track">Late Night Drive</span>
+                <span class="mockup__player-artist">Ambient Collective</span>
+              </div>
+              <span class="mockup__player-icon" aria-hidden="true">
+                <span class="eq-bar"></span>
+                <span class="eq-bar"></span>
+                <span class="eq-bar"></span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== FEATURES GRID ===================== -->
+      <section class="features" aria-labelledby="features-title">
+        <h2 id="features-title" class="section-title">Built for focus</h2>
+
+        <div class="features__grid">
+          <article class="card card--span-6">
+            <span class="card__icon" aria-hidden="true">♫</span>
+            <h3 class="card__title">Native Spotify Integration</h3>
+            <p class="card__text">Control playback, queue tracks, and see what's playing without leaving your tab.</p>
+          </article>
+
+          <article class="card card--span-6">
+            <span class="card__icon" aria-hidden="true">✦</span>
+            <h3 class="card__title">Ambient Audio Engine</h3>
+            <p class="card__text">Layer rain, fire, or low static drones underneath anything you're listening to.</p>
+          </article>
+
+          <article class="card card--span-4">
+            <span class="card__icon" aria-hidden="true">◷</span>
+            <h3 class="card__title">Minimal Clock &amp; Quotes</h3>
+            <p class="card__text">A quiet timekeeper paired with a rotating line of quiet wisdom.</p>
+          </article>
+
+          <article class="card card--span-8">
+            <span class="card__icon" aria-hidden="true">⌘</span>
+            <h3 class="card__title">Smart Navigation Hub</h3>
+            <p class="card__text">Jump to any site, bookmark, or open tab with a single keystroke — no mouse required.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- ===================== PREMIUM TEASER ===================== -->
+      <section class="premium" aria-labelledby="premium-title">
+        <div class="premium__panel">
+          <span class="premium__icon" aria-hidden="true">◈</span>
+          <div class="premium__copy">
+            <span class="premium__eyebrow">Coming soon</span>
+            <h2 id="premium-title" class="premium__title">FoxUI Premium</h2>
+            <p class="premium__text">Custom themes, cloud-synced layouts, and deeper Spotify controls — in development now.</p>
+          </div>
+          <span class="premium__status">Coming Soon</span>
+        </div>
+      </section>
+
+      <!-- ===================== SETTINGS / DUAL PANEL ===================== -->
+      <section class="settings" aria-labelledby="settings-title">
+        <div class="settings__copy">
+          <span class="eyebrow">Configuration</span>
+          <h2 id="settings-title" class="section-title">Modular by design</h2>
+          <p class="settings__text">
+            Every panel on your dashboard is a separate module. Resize, hide, or rearrange
+            the clock, player, and navigation hub independently — FoxUI adapts to the layout
+            you actually want, not the one it shipped with.
+          </p>
+        </div>
+
+        <div class="settings__panels">
+          <div class="panel-img panel-img--a" role="img" aria-label="Settings panel showing layout density controls">
+            <div class="panel-img__row panel-img__row--title"></div>
+            <div class="panel-img__row"></div>
+            <div class="panel-img__row panel-img__row--short"></div>
+            <div class="panel-img__toggle"></div>
+          </div>
+          <div class="panel-img panel-img--b" role="img" aria-label="Settings panel showing module visibility controls">
+            <div class="panel-img__row panel-img__row--title"></div>
+            <div class="panel-img__row panel-img__row--short"></div>
+            <div class="panel-img__row"></div>
+            <div class="panel-img__toggle panel-img__toggle--off"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== QUOTE BANNER ===================== -->
+      <section class="quote-banner" aria-label="Featured quote">
+        <p class="quote-banner__text">
+          “Never let the fear of striking out keep you from playing the game.”
+        </p>
+      </section>
+
+    </main>
+
+    <!-- ===================== FOOTER ===================== -->
+    <footer class="footer">
+      <div class="footer__inner">
+        <div class="footer__support">
+          <span class="footer__support-label">Support the project</span>
+          <div class="footer__donate">
+            <a href="https://paypal.me" target="_blank" rel="noopener noreferrer" class="donate-btn donate-btn--paypal">
+              <span class="donate-btn__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M5 4.5h9.2c3 0 5.1 2 4.7 4.9-.5 3.6-3.1 5.6-6.6 5.6H9.6l-1 5H5.2L7.4 6.4M9.6 14.9h2.6c2.2 0 3.7-1.2 4-3.3.3-1.9-.8-3-2.8-3H10l-1.3 8.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              PayPal
+            </a>
+            <a href="https://ko-fi.com" target="_blank" rel="noopener noreferrer" class="donate-btn donate-btn--kofi">
+              <span class="donate-btn__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M5 9h12.5c1.4 0 2.5 1.1 2.5 2.5S18.9 14 17.5 14H17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M5 9h12v4.5A4.5 4.5 0 0 1 12.5 18h-3A4.5 4.5 0 0 1 5 13.5V9Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M9.5 6.3c-.4-.6-.2-1.3.4-1.5.5-.2 1 .1 1.1.6M13 6.3c-.4-.6-.2-1.3.4-1.5.5-.2 1 .1 1.1.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                </svg>
+              </span>
+              Ko-fi
+            </a>
+          </div>
+        </div>
+
+        <div class="footer__base">
+          <p class="footer__credit">Crafted by <a href="https://riviyax.site" class="footer__link">Riviya_X</a></p>
+          <div class="footer__tags">
+            <span class="tag">© 2026 FoxUI</span>
+            <span class="tag">All rights reserved</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+</body>
+</html>

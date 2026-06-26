@@ -87,7 +87,7 @@ html, body {
 }
 
 /* ---------- Layout Wrappers ---------- */
-header, main, .music-control, dialog {
+header, main, .music-control {
   position: relative;
   z-index: 10;
 }
@@ -178,7 +178,7 @@ header, main, .music-control, dialog {
   gap: 32px;
   padding: 20px 32px 40px;
   min-height: calc(100vh - var(--topbar-h));
-  align-items: flex-start;
+  align-items: start;
 }
 
 /* ---------- Left Panel ---------- */
@@ -186,25 +186,26 @@ header, main, .music-control, dialog {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding-top: 60px;
-  /* True centering: the left panel fills its grid cell, hero-section centers within it */
+  /* Don't use justify-content:center here — just pad from top so clock sits ~1/3 down */
+  padding-top: clamp(40px, 10vh, 100px);
 }
 
 .hero-section {
   width: 100%;
-  max-width: 620px;
+  max-width: 660px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 28px;
-  /* Centers relative to left panel, which itself is centered in the grid cell */
   margin: 0 auto;
+  /* Ensure children like search-card stretch to full width so they center properly */
 }
 
 /* ---------- Clock ---------- */
 .clock-wrap {
+  width: 100%;
   text-align: center;
+  align-self: center;
 }
 
 .clock {
@@ -227,7 +228,8 @@ header, main, .music-control, dialog {
 /* ---------- Quote Block ---------- */
 .quote-block {
   text-align: center;
-  max-width: 560px;
+  width: 100%;
+  max-width: 580px;
   padding: 20px 28px;
   background: var(--glass-1);
   border: 1px solid var(--border-subtle);
@@ -235,6 +237,7 @@ header, main, .music-control, dialog {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   position: relative;
+  align-self: center;
 }
 
 .quote-mark {
@@ -270,6 +273,8 @@ header, main, .music-control, dialog {
 /* ---------- Search ---------- */
 .search-card {
   width: 100%;
+  max-width: 580px;
+  align-self: center;
   position: relative;
   display: flex;
   align-items: center;
@@ -313,6 +318,8 @@ header, main, .music-control, dialog {
   flex-wrap: wrap;
   justify-content: center;
   width: 100%;
+  max-width: 580px;
+  align-self: center;
 }
 
 .link {
@@ -622,6 +629,8 @@ dialog {
   background: transparent;
   max-width: 520px;
   width: 95vw;
+  margin: auto;
+  /* Remove top/transform — they fight showModal()'s top-layer positioning */
 }
 
 dialog::backdrop {

@@ -4,132 +4,466 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>ChromeUI</title>
-
-    <!-- Google Font -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
-
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet" />
     <style>
-      * {
-        margin: 0;
-        padding: 0;
+      *, *::before, *::after {
+        margin: 0; padding: 0;
         box-sizing: border-box;
-        font-family: "Poppins", sans-serif;
+        font-family: 'Inter', system-ui, sans-serif;
+      }
+
+      :root {
+        --bg-deep:    #06080f;
+        --bg-card:    rgba(255,255,255,0.04);
+        --bg-card2:   rgba(255,255,255,0.07);
+        --border:     rgba(255,255,255,0.08);
+        --border-mid: rgba(255,255,255,0.13);
+        --text:       rgba(255,255,255,0.92);
+        --muted:      rgba(255,255,255,0.45);
+        --accent:     #7eb8f7;
+        --accent-dim: rgba(126,184,247,0.14);
+        --accent-border: rgba(126,184,247,0.28);
+        --radius:     14px;
+        --radius-sm:  9px;
+      }
+
+      html {
+        width: 320px;
+        background: var(--bg-deep);
       }
 
       body {
-        width: 100%;
-        min-height: 100vh;
-        background: linear-gradient(135deg, #f5f7fa, #e4ebf5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 16px;
+        width: 320px;
+        min-height: 100px;
+        background: var(--bg-deep);
+        color: var(--text);
+        overflow: hidden;
       }
 
-      .card {
-        background: #ffffff;
-        width: 300px;
-        max-width: 420px;
-        padding: 32px 28px;
-        border-radius: 16px;
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
-        text-align: center;
-        position: relative;
+      /* ── Animated background ── */
+      .ambient {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: 0;
       }
 
-      /* GitHub button */
-      .github {
+      .ambient::before {
+        content: '';
         position: absolute;
-        top: 16px;
-        right: 16px;
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(126,184,247,0.09) 0%, transparent 70%);
+        top: -60px;
+        right: -40px;
+        animation: float1 8s ease-in-out infinite;
       }
 
-      .github a {
+      .ambient::after {
+        content: '';
+        position: absolute;
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(167,139,250,0.07) 0%, transparent 70%);
+        bottom: -30px;
+        left: -20px;
+        animation: float2 10s ease-in-out infinite;
+      }
+
+      @keyframes float1 {
+        0%, 100% { transform: translate(0, 0); }
+        50%       { transform: translate(-12px, 16px); }
+      }
+      @keyframes float2 {
+        0%, 100% { transform: translate(0, 0); }
+        50%       { transform: translate(10px, -12px); }
+      }
+
+      /* ── Content wrapper ── */
+      .popup-inner {
+        position: relative;
+        z-index: 1;
+        padding: 24px 20px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+
+      /* ── Header ── */
+      .header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .logo-wrap {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: var(--bg-card2);
+        border: 1px solid var(--border-mid);
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        background: black;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        flex-shrink: 0;
+        overflow: hidden;
       }
 
-      .github a:hover {
-        transform: translateY(-0.5px);
-        box-shadow: 0 8px 20px rgb(155, 155, 155);
+      .logo-wrap img {
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
       }
 
-      .github img {
-        width: 22px;
-        height: 22px;
-        filter: invert(1);
-      }
+      .header-text { flex: 1; }
 
-      .logo {
-        width: 96px;
-        height: 96px;
-        margin-bottom: 16px;
-      }
-
-      h3 {
-        font-size: 24px;
+      .app-name {
+        font-size: 16px;
         font-weight: 600;
-        color: #111827;
-        margin-bottom: 8px;
+        letter-spacing: 0.01em;
+        color: var(--text);
+        line-height: 1.2;
       }
 
-      p {
-        font-size: 14px;
-        color: #4b5563;
-        margin-bottom: 8px;
+      .app-version {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 1px;
+        letter-spacing: 0.03em;
       }
 
-      .footer {
-        margin-top: 20px;
+      .github-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
+        background: var(--bg-card2);
+        border: 1px solid var(--border);
+        text-decoration: none;
+        transition: background 0.2s, border-color 0.2s, transform 0.15s;
+        flex-shrink: 0;
+      }
+
+      .github-btn:hover {
+        background: rgba(255,255,255,0.1);
+        border-color: var(--border-mid);
+        transform: translateY(-1px);
+      }
+
+      .github-btn img {
+        width: 16px;
+        height: 16px;
+        filter: invert(1);
+        opacity: 0.7;
+      }
+
+      /* ── Divider ── */
+      .divider {
+        height: 1px;
+        background: var(--border);
+        margin: 0 0 18px;
+      }
+
+      /* ── Quote strip ── */
+      .quote-strip {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 12px 14px;
+        margin-bottom: 18px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .quote-strip::before {
+        content: '"';
+        font-family: 'Instrument Serif', serif;
+        font-style: italic;
+        font-size: 44px;
+        line-height: 0;
+        position: absolute;
+        top: 18px;
+        left: 10px;
+        color: var(--accent);
+        opacity: 0.25;
+      }
+
+      .quote-strip p {
+        font-family: 'Instrument Serif', Georgia, serif;
+        font-style: italic;
         font-size: 13px;
-        color: #6b7280;
+        line-height: 1.55;
+        color: rgba(255,255,255,0.75);
+        padding-left: 14px;
       }
 
-      .footer a {
-        color: #0b74ff;
+      /* ── Stat pills row ── */
+      .stats-row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 18px;
+      }
+
+      .stat-pill {
+        flex: 1;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 10px 12px;
+        text-align: center;
+        transition: background 0.2s, border-color 0.2s;
+      }
+
+      .stat-pill:hover {
+        background: var(--bg-card2);
+        border-color: var(--border-mid);
+      }
+
+      .stat-value {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text);
+        line-height: 1;
+        margin-bottom: 3px;
+      }
+
+      .stat-label {
+        font-size: 10px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      /* ── Action buttons ── */
+      .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 18px;
+      }
+
+      .action-btn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 11px 14px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+        background: var(--bg-card);
+        color: var(--text);
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background 0.2s, border-color 0.2s, transform 0.1s;
+        text-align: left;
+        width: 100%;
+      }
+
+      .action-btn:hover {
+        background: var(--bg-card2);
+        border-color: var(--border-mid);
+      }
+
+      .action-btn:active { transform: scale(0.99); }
+
+      .action-btn.primary {
+        background: var(--accent-dim);
+        border-color: var(--accent-border);
+        color: var(--accent);
+      }
+
+      .action-btn.primary:hover {
+        background: rgba(126,184,247,0.2);
+        border-color: rgba(126,184,247,0.4);
+      }
+
+      .action-icon {
+        font-size: 16px;
+        line-height: 1;
+        flex-shrink: 0;
+      }
+
+      .action-text { flex: 1; }
+
+      .action-arrow {
+        font-size: 13px;
+        color: var(--muted);
+        flex-shrink: 0;
+      }
+
+      /* ── Footer ── */
+      .footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 14px;
+        border-top: 1px solid var(--border);
+      }
+
+      .footer-credit {
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .footer-credit a {
+        color: var(--accent);
         text-decoration: none;
         font-weight: 500;
+        transition: opacity 0.2s;
       }
 
-      .footer a:hover {
-        text-decoration: underline;
+      .footer-credit a:hover { opacity: 0.8; }
+
+      .status-dot {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #4ade80;
+        box-shadow: 0 0 6px rgba(74,222,128,0.5);
+        animation: pulse-green 2.5s ease-in-out infinite;
+      }
+
+      @keyframes pulse-green {
+        0%, 100% { opacity: 1; }
+        50%       { opacity: 0.4; }
       }
     </style>
   </head>
-
   <body>
-    <div class="card">
-      <div class="github">
-        <a
-          href="https://github.com/riviyax"
-          target="_blank"
-          aria-label="GitHub Profile"
-        >
-          <img
-            src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png"
-            alt="GitHub"
-          />
+    <div class="ambient"></div>
+    <div class="popup-inner">
+
+      <!-- Header -->
+      <div class="header">
+        <div class="logo-wrap">
+          <img src="icons/icon128.png" alt="ChromeUI" />
+        </div>
+        <div class="header-text">
+          <div class="app-name">ChromeUI</div>
+          <div class="app-version">v1.0 · Custom New Tab</div>
+        </div>
+        <a href="https://github.com/riviyax" target="_blank" class="github-btn" title="GitHub">
+          <img src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png" alt="GitHub" />
         </a>
       </div>
 
-      <img src="icons/icon128.png" alt="ChromeUI Logo" class="logo" />
+      <div class="divider"></div>
 
-      <h3>ChromeUI</h3>
-      <p>Thanks for using our extension!</p>
+      <!-- Daily quote -->
+      <div class="quote-strip">
+        <p id="popup-quote">Loading quote…</p>
+      </div>
 
-      <p class="footer">
-        Made with ♥ by
-        <a href="https://riviyax.pages.dev" target="_blank">Riviya_X</a>
-      </p>
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-pill">
+          <div class="stat-value" id="stat-time">—</div>
+          <div class="stat-label">Current Time</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-value" id="stat-tasks">—</div>
+          <div class="stat-label">Tasks Done</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-value" id="stat-day">—</div>
+          <div class="stat-label">Day of Year</div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="actions">
+        <a href="chrome://newtab" target="_blank" class="action-btn primary">
+          <span class="action-icon">✦</span>
+          <span class="action-text">Open New Tab</span>
+          <span class="action-arrow">↗</span>
+        </a>
+        <a href="https://github.com/riviyax" target="_blank" class="action-btn">
+          <span class="action-icon">⌘</span>
+          <span class="action-text">View Source on GitHub</span>
+          <span class="action-arrow">↗</span>
+        </a>
+        <a href="https://riviyax.pages.dev" target="_blank" class="action-btn">
+          <span class="action-icon">◈</span>
+          <span class="action-text">Developer Portfolio</span>
+          <span class="action-arrow">↗</span>
+        </a>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <div class="footer-credit">
+          Made with ♥ by <a href="https://riviyax.pages.dev" target="_blank">Riviya_X</a>
+        </div>
+        <div class="status-dot">
+          <div class="dot"></div>
+          Active
+        </div>
+      </div>
+
     </div>
+
+    <script>
+      // Daily quote (same logic as newtab-core.js)
+      const QUOTES = [
+        { text: 'The only way to do great work is to love what you do.', author: 'Steve Jobs' },
+        { text: 'In the middle of every difficulty lies opportunity.', author: 'Albert Einstein' },
+        { text: 'It does not matter how slowly you go as long as you do not stop.', author: 'Confucius' },
+        { text: 'The future belongs to those who believe in the beauty of their dreams.', author: 'Eleanor Roosevelt' },
+        { text: 'The mind is everything. What you think you become.', author: 'Buddha' },
+        { text: 'Your time is limited, so don\'t waste it living someone else\'s life.', author: 'Steve Jobs' },
+        { text: 'The best time to plant a tree was 20 years ago. The second best time is now.', author: 'Chinese Proverb' },
+        { text: 'An investment in knowledge pays the best interest.', author: 'Benjamin Franklin' },
+      ];
+
+      const now = new Date();
+      const start = new Date(now.getFullYear(), 0, 0);
+      const dayOfYear = Math.floor((now - start) / 86400000);
+      const q = QUOTES[dayOfYear % QUOTES.length];
+
+      const el = document.getElementById('popup-quote');
+      if (el) el.textContent = `${q.text} — ${q.author}`;
+
+      // Live clock
+      function updateTime() {
+        const t = new Date();
+        const el = document.getElementById('stat-time');
+        if (el) el.textContent = t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      }
+      updateTime();
+      setInterval(updateTime, 1000);
+
+      // Day of year
+      const dayEl = document.getElementById('stat-day');
+      if (dayEl) dayEl.textContent = '#' + dayOfYear;
+
+      // Tasks done from localStorage (read via extension)
+      try {
+        const tasks = JSON.parse(localStorage.getItem('newtab_todo_tasks') || '[]');
+        const done = tasks.filter(t => t.completed).length;
+        const taskEl = document.getElementById('stat-tasks');
+        if (taskEl) taskEl.textContent = done + '/' + tasks.length;
+      } catch (e) {
+        const taskEl = document.getElementById('stat-tasks');
+        if (taskEl) taskEl.textContent = '—';
+      }
+    </script>
   </body>
 </html>

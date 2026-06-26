@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "ChromeUI \u2014 Custom Chrome Tab",
+  "name": "FoxUI \u2014 Custom Chrome Tab",
   "version": "1.0",
   "description": "Stylish dashboard new tab with background videos/images, clock, greeting, and easy customization. - Made with ♥ by Riviya_X",
   "permissions": ["storage"],
@@ -14,7 +14,7 @@
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "ChromeUI"
+    "default_title": "FoxUI"
   },
   "web_accessible_resources": [
     {
