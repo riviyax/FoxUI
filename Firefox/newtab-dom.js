@@ -28,6 +28,8 @@ import {
   loadCardOrder,
 } from './newtab-config.js';
 
+import { initSpotify } from './spotify.js';
+
 let configs = null;
 
 /* ─────────────────────────────────────────────
@@ -232,8 +234,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const openSettings     = document.getElementById('open-settings');
   const closeBtn         = document.getElementById('close-btn');
   const saveBtn          = document.getElementById('save-btn');
-  const fileInput        = document.getElementById('file-input');
-  const fileNameEl       = document.getElementById('file-name');
   const overlayRange     = document.getElementById('overlay-range');
   const overlayValEl     = document.getElementById('overlay-val');
   const imgSelect        = document.getElementById('image-select');
@@ -247,7 +247,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const quickUrl         = document.getElementById('quick-url');
   const addQuick         = document.getElementById('add-quick');
   const quickEditor      = document.getElementById('quick-list-editor');
-  const audioInput       = document.getElementById('audio-input');
   const musicSelect      = document.getElementById('music-select');
   const lockToggle       = document.getElementById('lock-toggle');
 
@@ -263,13 +262,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     overlayRange.addEventListener('input', () => {
       overlayValEl.textContent = parseFloat(overlayRange.value).toFixed(2);
       applyOverlay(overlayRange.value);
-    });
-  }
-
-  /* --- File input label update --- */
-  if (fileInput && fileNameEl) {
-    fileInput.addEventListener('change', () => {
-      fileNameEl.textContent = fileInput.files[0] ? fileInput.files[0].name : 'No file chosen';
     });
   }
 
@@ -331,13 +323,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (vidSelect) vidSelect.appendChild(opt);
   });
 
-  (saved.uploads || []).forEach(item => {
-    const opt = document.createElement('option');
-    opt.value = item.id; opt.textContent = `[Upload] ${item.name}`;
-    if (item.type === 'image' && imgSelect) imgSelect.appendChild(opt);
-    else if (item.type === 'video' && vidSelect) vidSelect.appendChild(opt);
-  });
-
   (configs.music || []).forEach(m => {
     const opt = document.createElement('option');
     opt.value = m.id || m.name; opt.textContent = m.name;
@@ -360,16 +345,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   let currentBgId = null;
 
   if (saved.current) {
-    // Re-resolve packaged backgrounds to refresh chrome.runtime URLs
-    if (saved.current.id && saved.current.id.startsWith('default-')) {
-      const found = state.list.find(x => x.id === saved.current.id);
-      if (found) saved.current = { ...found, overlay: saved.overlay || found.overlay };
-    }
-    // Re-resolve packaged (non-upload) backgrounds
-    if (saved.current.id && !saved.current.id.startsWith('upload-')) {
-      const found = state.list.find(x => x.id === saved.current.id);
-      if (found) saved.current = { ...found, overlay: saved.overlay || found.overlay };
-    }
+    const found = state.list.find(x => x.id === saved.current.id);
+    if (found) saved.current = { ...found, overlay: saved.overlay || found.overlay };
     applyBackground(saved.current);
     if (saved.current.id) {
       currentBgId = saved.current.id;
@@ -408,6 +385,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (saved.musicIndex !== undefined) state.music.index = saved.musicIndex;
   updateMusicUI();
 
+  /* --- Spotify player --- */
+  initSpotify(saved);
+
   /* --- Add quick link --- */
   if (addQuick) {
     addQuick.addEventListener('click', () => {
@@ -419,73 +399,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (quickUrl)   quickUrl.value   = '';
       renderQuickLinks(state.quickLinks);
       renderQuickEditor(state.quickLinks, quickEditor);
-    });
-  }
-
-  /* ─── File Upload (Background) ─── */
-  if (fileInput) {
-    fileInput.addEventListener('change', e => {
-      const f = e.target.files && e.target.files[0];
-      if (!f) return;
-      const reader = new FileReader();
-      reader.onload = evt => {
-        const data = evt.target.result;
-        const type = f.type.startsWith('video') ? 'video' : 'image';
-        const item = {
-          type,
-          src: data,
-          name: f.name,
-          id: 'upload-' + Date.now(),
-          overlay: parseFloat(overlayRange ? overlayRange.value : 0.45),
-        };
-
-        loadSettings().then(s => {
-          if (!s) s = {};
-          s.uploads = s.uploads || [];
-          // Limit stored uploads to 5 most recent to avoid exceeding local quota
-          s.uploads.unshift(item);
-          if (s.uploads.length > 5) s.uploads = s.uploads.slice(0, 5);
-          s.current = item;
-          s.overlay = parseFloat(overlayRange ? overlayRange.value : 0.45);
-          saveSettings(s);
-
-          state.list.unshift(item);
-          state.index = 0;
-          applyBackground(item);
-
-          const opt = document.createElement('option');
-          opt.value = item.id;
-          opt.textContent = `[Upload] ${item.name}`;
-          if (type === 'image' && imgSelect) { imgSelect.prepend(opt); imgSelect.value = item.id; if (vidSelect) vidSelect.value = ''; }
-          else if (type === 'video' && vidSelect) { vidSelect.prepend(opt); vidSelect.value = item.id; if (imgSelect) imgSelect.value = ''; }
-
-          settingsDialog && settingsDialog.close();
-        });
-      };
-      reader.readAsDataURL(f);
-    });
-  }
-
-  /* ─── Audio Upload ─── */
-  if (audioInput) {
-    audioInput.addEventListener('change', e => {
-      const f = e.target.files && e.target.files[0];
-      if (!f) return;
-      const reader = new FileReader();
-      reader.onload = evt => {
-        const aitem = { name: f.name, src: evt.target.result, id: 'au-' + Date.now() };
-        loadSettings().then(s => {
-          if (!s) s = {};
-          s.uploadedAudio = s.uploadedAudio || [];
-          s.uploadedAudio.unshift(aitem);
-          if (s.uploadedAudio.length > 10) s.uploadedAudio = s.uploadedAudio.slice(0, 10);
-          saveSettings(s);
-          state.music.playlist.unshift(aitem);
-          state.music.index = 0;
-          playCurrentTrack();
-        });
-      };
-      reader.readAsDataURL(f);
     });
   }
 
@@ -554,16 +467,37 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   /* ─── Lock Toggle (FIXED: inside DOMContentLoaded) ─── */
   if (lockToggle) {
-    const draggable = localStorage.getItem('draggableCards');
-    // Checked = locked (dragging disabled)
-    lockToggle.checked = draggable !== 'true';
+    const draggableSetting = localStorage.getItem('draggableCards');
+    
+    // Default to 'true' (unlocked) if no setting exists yet
+    const isDraggable = draggableSetting === null ? true : draggableSetting === 'true';
+    
+    // Checkbox: Checked = Locked (No dragging)
+    lockToggle.checked = !isDraggable;
+
+    // Apply draggable attribute to all cards based on setting
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+      card.setAttribute('draggable', isDraggable ? 'true' : 'false');
+    });
 
     lockToggle.addEventListener('change', () => {
-      const locked = lockToggle.checked;
-      localStorage.setItem('draggableCards', locked ? 'false' : 'true');
-      // Reload so drag setup re-runs with correct value
-      setTimeout(() => location.reload(), 150);
+      const isLocked = lockToggle.checked;
+      localStorage.setItem('draggableCards', isLocked ? 'false' : 'true');
+      
+      // Update attributes immediately without reload
+      cards.forEach(card => {
+        card.setAttribute('draggable', !isLocked ? 'true' : 'false');
+      });
+      
+      // Reload is still recommended to re-bind listeners or stop them
+      setTimeout(() => location.reload(), 100);
     });
+
+    // Only run setup if it's currently unlocked
+    if (isDraggable) {
+      setupDragAndDrop();
+    }
   }
 
   /* ─── Restore panel visibility ─── */

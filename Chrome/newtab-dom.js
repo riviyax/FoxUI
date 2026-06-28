@@ -467,16 +467,37 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   /* ─── Lock Toggle (FIXED: inside DOMContentLoaded) ─── */
   if (lockToggle) {
-    const draggable = localStorage.getItem('draggableCards');
-    // Checked = locked (dragging disabled)
-    lockToggle.checked = draggable !== 'true';
+    const draggableSetting = localStorage.getItem('draggableCards');
+    
+    // Default to 'true' (unlocked) if no setting exists yet
+    const isDraggable = draggableSetting === null ? true : draggableSetting === 'true';
+    
+    // Checkbox: Checked = Locked (No dragging)
+    lockToggle.checked = !isDraggable;
+
+    // Apply draggable attribute to all cards based on setting
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+      card.setAttribute('draggable', isDraggable ? 'true' : 'false');
+    });
 
     lockToggle.addEventListener('change', () => {
-      const locked = lockToggle.checked;
-      localStorage.setItem('draggableCards', locked ? 'false' : 'true');
-      // Reload so drag setup re-runs with correct value
-      setTimeout(() => location.reload(), 150);
+      const isLocked = lockToggle.checked;
+      localStorage.setItem('draggableCards', isLocked ? 'false' : 'true');
+      
+      // Update attributes immediately without reload
+      cards.forEach(card => {
+        card.setAttribute('draggable', !isLocked ? 'true' : 'false');
+      });
+      
+      // Reload is still recommended to re-bind listeners or stop them
+      setTimeout(() => location.reload(), 100);
     });
+
+    // Only run setup if it's currently unlocked
+    if (isDraggable) {
+      setupDragAndDrop();
+    }
   }
 
   /* ─── Restore panel visibility ─── */
